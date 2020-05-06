@@ -1,10 +1,84 @@
 package com.codechallenge.may;
 
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class Challenge {
 
     public static void main(String[] args) {
-        findComplement(5);
+        //findComplement(5);
+        /*System.out.println(canConstruct("bcb",
+                "cjjajdfaaeegig"));*/
+
+        int[] nums = new int[]{2, 2, 1, 1, 1, 2, 2};
+        System.out.println(majorityElement(nums);
+    }
+
+    /**
+     * Ransom Note
+     * Solution
+     * Given an arbitrary ransom note string and another string containing letters from all the magazines, write a function that will return true if the ransom note can be constructed from the magazines ; otherwise, it will return false.
+     * <p>
+     * Each letter in the magazine string can only be used once in your ransom note.
+     * <p>
+     * Note:
+     * You may assume that both strings contain only lowercase letters.
+     * <p>
+     * canConstruct("a", "b") -> false
+     * canConstruct("aa", "ab") -> false
+     * canConstruct("aa", "aab") -> true
+     *
+     * @param ransomNote
+     * @param magazine
+     * @return
+     */
+    public static boolean canConstruct(String ransomNote, String magazine) {
+        char[] charArray = magazine.toCharArray();
+        Map<String, Integer> magazineDictionary = new ConcurrentHashMap<>();
+        Map<String, Integer> ransomDictionary = new ConcurrentHashMap<>();
+        Integer initializer = 1;
+
+        for (int index = 0; index < charArray.length; index++) {
+            String key = String.valueOf(charArray[index]);
+            if (magazineDictionary.get(key) != null) {
+                Integer val = magazineDictionary.get(key);
+                val = val + 1;
+                magazineDictionary.put(key, val);
+            } else {
+                magazineDictionary.put(key, initializer);
+            }
+        }
+
+        System.out.println(magazineDictionary.toString());
+
+        charArray = ransomNote.toCharArray();
+        for (int index = 0; index < charArray.length; index++) {
+            String key = String.valueOf(charArray[index]);
+            if (ransomDictionary.get(key) != null) {
+                Integer val = ransomDictionary.get(key);
+                val = val + 1;
+                ransomDictionary.replace(key, val);
+            } else {
+                ransomDictionary.put(key, initializer);
+            }
+        }
+
+        System.out.println(ransomDictionary.toString());
+
+        AtomicBoolean isPossible = new AtomicBoolean(true);
+        ransomDictionary.entrySet().forEach(stringIntegerEntry -> {
+            String key = stringIntegerEntry.getKey();
+            if (magazineDictionary.containsKey(key) && magazineDictionary.get(key) >= stringIntegerEntry.getValue()) {
+                isPossible.set(true);
+            } else {
+                isPossible.set(false);
+                return;
+            }
+        });
+
+        return isPossible.get();
     }
 
     /**
@@ -65,5 +139,34 @@ public class Challenge {
             }
         }
         return -1;
+    }
+
+    public static int majorityElement(int[] nums) {
+
+        Map<Integer, Integer> magazineDictionary = new ConcurrentHashMap<>();
+        Integer initializer = 1;
+        Integer maxValue = 0;
+        Integer maxKey = 0;
+
+        for (int index = 0; index < nums.length; index++) {
+            Integer key = nums[index];
+            if (magazineDictionary.get(key) != null) {
+                Integer val = magazineDictionary.get(key);
+                val = val + 1;
+                magazineDictionary.put(key, val);
+                if (val > maxValue) {
+                    maxValue = val;
+                    maxKey = key;
+                }
+            } else {
+                magazineDictionary.put(key, initializer);
+                if (initializer > maxValue) {
+                    maxValue = initializer;
+                    maxKey = key;
+                }
+            }
+        }
+        return maxKey;
+
     }
 }
